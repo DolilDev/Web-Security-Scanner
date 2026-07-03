@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from pathlib import Path
+import json
 
 router = APIRouter()
 
@@ -17,12 +18,27 @@ async def dashboard_index():
     return FileResponse(index_file)
 
 
+@router.get("/dashboard/reports")
+async def list_reports():
+    if not REPORTS_DIR.exists():
+        return JSONResponse(content={"reports": []})
+    files = [p.name for p in sorted(REPORTS_DIR.glob("*.json"))]
+    return JSONResponse(content={"reports": files})
+
+
 @router.get("/dashboard/report/{name}")
 async def get_report(name: str):
     report_file = REPORTS_DIR / name
     if not report_file.exists():
         raise HTTPException(status_code=404, detail="Report not found")
     try:
-        return JSONResponse(content=report_file.read_text(encoding="utf-8"))
+        text = report_file.read_text(encoding="utf-8")
+        # Try to parse JSON stored as dict {"results": [...]} or raw list
+        try:
+            data = json.loads(text)
+        except Exception:
+            # fallback: return text as plain
+            return JSONResponse(content={"raw": text})
+        return JSONResponse(content=data)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))

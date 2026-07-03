@@ -8,18 +8,43 @@
 <body>
   <h1>WebSec Scanner - Report Viewer</h1>
   <p>To view a report, enter the report filename (e.g. report.json):</p>
+  <p>Available reports:</p>
+  <ul id="reports"></ul>
+  <p>Or enter a report filename (e.g. report.json):</p>
   <input id="name" placeholder="report.json" />
   <button id="load">Load</button>
   <pre id="out" style="white-space:pre-wrap;border:1px solid #ddd;padding:10px;margin-top:10px;max-height:60vh;overflow:auto"></pre>
   <script>
-    document.getElementById('load').addEventListener('click', async ()=>{
-      const name = document.getElementById('name').value || 'report.json';
+    async function loadReport(name){
       const resp = await fetch('/dashboard/report/' + encodeURIComponent(name));
       if (!resp.ok) { document.getElementById('out').textContent = 'Error: ' + resp.status; return; }
-      const text = await resp.text();
-      try { const json = JSON.parse(text); document.getElementById('out').textContent = JSON.stringify(json, null, 2); }
-      catch(e){ document.getElementById('out').textContent = text }
+      const json = await resp.json();
+      document.getElementById('out').textContent = JSON.stringify(json, null, 2);
+    }
+
+    document.getElementById('load').addEventListener('click', ()=>{
+      const name = document.getElementById('name').value || 'report.json';
+      loadReport(name);
     })
+
+    async function refreshReports(){
+      const resp = await fetch('/dashboard/reports');
+      if (!resp.ok) return;
+      const data = await resp.json();
+      const ul = document.getElementById('reports');
+      ul.innerHTML = '';
+      (data.reports || []).forEach(r=>{
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#';
+        a.textContent = r;
+        a.addEventListener('click', (e)=>{ e.preventDefault(); loadReport(r); });
+        li.appendChild(a);
+        ul.appendChild(li);
+      })
+    }
+
+    refreshReports();
   </script>
 </body>
 </html>
