@@ -7,3 +7,4 @@ from . import dns  # noqa: F401
 from . import infra  # noqa: F401
 from . import compression  # noqa: F401
 from . import fingerprint  # noqa: F401
+from . import forms  # noqa: F401
