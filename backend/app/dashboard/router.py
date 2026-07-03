@@ -1,7 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from pathlib import Path
 import json
+from datetime import datetime
+
+from ..tests_engine.orchestration.runner import run_scan, save_report
 
 router = APIRouter()
 
@@ -44,3 +47,15 @@ async def get_report(name: str):
         raise HTTPException(status_code=500, detail=f"Cannot decode report file: {exc}")
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Unexpected error reading report: {exc}")
+
+
+@router.post("/api/scan")
+async def start_scan(target: str = Query(..., min_length=5), filename: str | None = None):
+    if not target:
+        raise HTTPException(status_code=400, detail="Target query parameter is required")
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    if not filename:
+        filename = f"report-{datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}.json"
+    report = await run_scan(target, concurrency=5)
+    save_report(report, str(REPORTS_DIR / filename))
+    return JSONResponse(content={"report": filename, "results": report})

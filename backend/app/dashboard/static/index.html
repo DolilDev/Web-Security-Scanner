@@ -13,6 +13,14 @@
     <button id="refresh">Refresh list</button>
     <ul id="reports"></ul>
   </section>
+  <section aria-labelledby="scan-heading">
+    <h2 id="scan-heading">Run a scan</h2>
+    <label for="target">Target URL</label>
+    <input id="target" placeholder="https://example.com" aria-label="Target URL" />
+    <label for="filename">Report filename (optional)</label>
+    <input id="filename" placeholder="optional-filename.json" aria-label="Report filename" />
+    <button id="run-scan">Run scan</button>
+  </section>
   <section aria-labelledby="load-heading">
     <h2 id="load-heading">Load a report</h2>
     <label for="name">Report filename</label>
@@ -60,6 +68,27 @@
       renderSummary(json, name);
       out.textContent = JSON.stringify(json, null, 2);
     }
+
+    document.getElementById('run-scan').addEventListener('click', async ()=>{
+      const target = document.getElementById('target').value.trim();
+      const filename = document.getElementById('filename').value.trim();
+      if (!target) {
+        document.getElementById('out').textContent = 'Please enter a target URL to scan.';
+        return;
+      }
+      document.getElementById('out').textContent = `Running scan for ${target}...`;
+      const params = new URLSearchParams();
+      params.set('target', target);
+      if (filename) params.set('filename', filename);
+      const resp = await fetch('/api/scan?' + params.toString(), { method: 'POST' });
+      if (!resp.ok) {
+        document.getElementById('out').textContent = 'Scan request failed: ' + resp.status + ' ' + resp.statusText;
+        return;
+      }
+      const data = await resp.json();
+      document.getElementById('out').textContent = JSON.stringify(data, null, 2);
+      refreshReports();
+    });
 
     document.getElementById('load').addEventListener('click', ()=>{
       const name = document.getElementById('name').value.trim() || 'report.json';
