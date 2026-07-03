@@ -12,3 +12,4 @@ from . import auth  # noqa: F401
 from . import redirects  # noqa: F401
 from . import code_disclosure  # noqa: F401
 from . import api  # noqa: F401
+from . import websockets  # noqa: F401
