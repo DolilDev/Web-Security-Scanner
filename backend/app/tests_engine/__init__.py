@@ -9,3 +9,4 @@ from . import compression  # noqa: F401
 from . import fingerprint  # noqa: F401
 from . import forms  # noqa: F401
 from . import auth  # noqa: F401
+from . import redirects  # noqa: F401
