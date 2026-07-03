@@ -1,0 +1,22 @@
+{
+  "results": [
+    {
+      "id": "headers.hsts",
+      "status": "pass",
+      "evidence": "Strict-Transport-Security header present",
+      "severity": "high"
+    },
+    {
+      "id": "redirects.https_only",
+      "status": "pass",
+      "evidence": "HTTP redirects to HTTPS",
+      "severity": "high"
+    },
+    {
+      "id": "api.cors_allow_all",
+      "status": "pass",
+      "evidence": "CORS origin not wildcard",
+      "severity": "high"
+    }
+  ]
+}
