@@ -1,1 +1,74 @@
-dosc.md
+# --- Python / FastAPI / Celery ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+celerybeat-schedule
+celerybeat.pid
+*.sqlite3
+
+# Alembic (keep migrations, ignore local db artifacts)
+*.db
+
+# --- Node / Next.js frontend ---
+node_modules/
+.next/
+out/
+.turbo/
+next-env.d.ts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# --- Env / secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+
+# --- Docker ---
+docker-compose.override.yml
+
+# --- Reports / scan output (mogą zawierać dane wrażliwe o skanowanym celu) ---
+reports/
+scans/
+*.pdf
+!docs/**/*.pdf
+
+# --- Zewnętrzne narzędzia pobierane lokalnie ---
+tools/testssl.sh/
+tools/nikto/
+*.log
+
+# --- Editor / OS ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Build artifacts ---
+dist/
+build/
+*.egg
+
+
+*.md
