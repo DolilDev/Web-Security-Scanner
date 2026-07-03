@@ -33,12 +33,14 @@ async def get_report(name: str):
         raise HTTPException(status_code=404, detail="Report not found")
     try:
         text = report_file.read_text(encoding="utf-8")
-        # Try to parse JSON stored as dict {"results": [...]} or raw list
         try:
             data = json.loads(text)
-        except Exception:
-            # fallback: return text as plain
+        except json.JSONDecodeError:
             return JSONResponse(content={"raw": text})
+        if not isinstance(data, (dict, list)):
+            return JSONResponse(content={"raw": data})
         return JSONResponse(content=data)
+    except UnicodeDecodeError as exc:
+        raise HTTPException(status_code=500, detail=f"Cannot decode report file: {exc}")
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        raise HTTPException(status_code=500, detail=f"Unexpected error reading report: {exc}")
