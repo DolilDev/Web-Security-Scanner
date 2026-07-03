@@ -1,3 +1,5 @@
 """Security test engine modules."""
 
 from . import headers  # noqa: F401
+from . import cookies  # noqa: F401
+from . import tls  # noqa: F401
